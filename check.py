@@ -4,25 +4,27 @@
 import time
 from tp4000zc import Dmm
 
-port = '/dev/ttyUSB0'
+try:
+    port = '/dev/ttyUSB0'
+    stop_loop = False
+    loop_limit = 100
 
-dmm = Dmm(port)
+    dmm = Dmm(port)
 
-stop_loop = False
+    while not stop_loop:
+        accum = 0
+        # read a value
+        val = dmm.read()
 
-while not stop_loop:
-    accum = 0
-    # read a value
-    val = dmm.read()
+        print val.text       # print the text representation of the value
+                             # something like: -4.9 millivolts DC
+        print val.numericVal # and the numeric value
+                             # ie: -0.0048
+        time.sleep(2)
+        accum += 1
+        if accum > loop_limit:
+            stop_loop = True
 
-    print val.text       # print the text representation of the value
-                         # something like: -4.9 millivolts DC
-    print val.numericVal # and the numeric value
-                         # ie: -0.0048
-    time.sleep(2)
-    accum += 1
-    if accum > 10:
-        stop_loop = True
-
-# recycle the serial port
-dmm.close()
+finally:
+    # recycle the serial port
+    dmm.close()
